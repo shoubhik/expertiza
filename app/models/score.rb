@@ -129,4 +129,18 @@ class Score < ActiveRecord::Base
       return -1 #indicating no score
     end
   end
+
+  def self._get_total_score(response, questions)
+    weighted_score = 0
+    sum_of_weights = 0
+    questions.each{
+        | question |
+      item = Score.find_by_response_id_and_question_id(response.id, question.id)
+      if item != nil
+        weighted_score += item.score * question.weight
+      end
+      sum_of_weights += question.weight
+    }
+    return (weighted_score.to_f / (sum_of_weights.to_f * questions.first.questionnaire.max_question_score.to_f)) * 100
+  end
 end
