@@ -1,5 +1,97 @@
 class TeamController < ApplicationController
  auto_complete_for :user, :name
+
+############## These methods created by mahesh############
+def And(number1, number2)
+  #produces bitwise and of two integers
+  return number1&number2
+end
+
+  def score(team)
+    #for each student in team
+    #result += And(studnet, nextstudnet)
+    #dec2bin(result)
+    #return sum of 1's in dec2bin(result)
+  end
+
+def min(a,b)
+    if a<b
+      return a
+    else
+      return b
+    end
+end
+
+  def create_teams_view
+    @parent = Object.const_get(session[:team_type]).find(params[:id])
+
+  end
+
+  def randomize_teams
+
+    parent = Object.const_get(session[:team_type]).find(params[:id])
+    participants = Participant.find(:all, :conditions => ["parent_id=?",parent.id])
+
+    participants = participants.sort{rand(3) - 1 }
+
+    no_of_teams = (participants.length)/(parent.team_count)
+    diff = (participants.length)%(parent.team_count)
+
+    i=0
+    j=0
+    k=0
+
+
+
+    for i in 1..no_of_teams
+      begin
+        check_for_existing_team_name(parent,"Team #{i}")
+
+      rescue TeamExistsError
+        team = Team.find_by_name("Team #{i}")
+        team.delete
+
+      end
+      team = Object.const_get(session[:team_type]+'Team').create(:name => "Team #{i}", :parent_id => parent.id)
+      TeamNode.create(:parent_id => parent.id, :node_object_id => team.id)
+
+
+      j=i*parent.team_count
+
+      for k in 1..parent.team_count
+        #for k in 0..(parent.team_count -1)
+        user = User.find_by_id(participants[j-k].user_id)
+        team.add_member(user)
+      end
+    end
+
+
+    if diff != 0
+      begin
+        check_for_existing_team_name(parent,"Team #{no_of_teams+1}")
+
+      rescue TeamExistsError
+        team = Team.find_by_name("Team #{no_of_teams+1}")
+        team.delete
+
+      end
+
+      team = Object.const_get(session[:team_type]+'Team').create(:name => "Team #{no_of_teams+1}", :parent_id => parent.id)
+      TeamNode.create(:parent_id => parent.id, :node_object_id => team.id)
+
+      for indx in 1..diff
+        user = User.find_by_id(participants[participants.length-indx].user_id)
+        team.add_member(user)
+      end
+
+
+    end
+
+    #for each member of the user-assignment table create random teams
+    # and add them to the database
+
+  end
+
  
 def create_teams_view
  @parent = Object.const_get(session[:team_type]).find(params[:id])
@@ -103,4 +195,13 @@ def create_teams
    redirect_to :controller => 'team', :action => 'list', :id => assignment.id
  end
  
+ protected
+ 
+ def check_for_existing_team_name(parent,name)    
+    list = Object.const_get(session[:team_type]+'Team').find(:all, :conditions => ['parent_id = ? and name = ?',parent.id,name])
+    if list.length > 0     
+      raise TeamExistsError, 'Team name, "'+name+'", is already in use.'
+    end
+ end
+
 end

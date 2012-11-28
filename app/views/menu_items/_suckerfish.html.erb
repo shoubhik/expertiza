@@ -1,6 +1,6 @@
 <% for item_id in items do 
      item = session[:menu].get_item(item_id)
-     selected = session[:menu].selected?(item.id) 
+     selected = session[:menu].selected?(item.id)
      long_name = item.name.split(/\W/).collect{|word| word.capitalize}.join(' ')
      -%>
 <li>

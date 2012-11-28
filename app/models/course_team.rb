@@ -81,6 +81,7 @@ class CourseTeam < Team
      CourseParticipant.create(:parent_id => course_id, :user_id => user.id, :permission_granted => user.master_permission_granted)
    end    
  end
+
   def self.export(csv, parent_id, options)
     course = Course.find(parent_id)
     assignmentList = Assignment.find_all_by_course_id(parent_id)

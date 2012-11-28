@@ -48,8 +48,6 @@ class GradesController < ApplicationController
         end
       end
     end
-
-
   end
 
   def edit
@@ -74,20 +72,20 @@ class GradesController < ApplicationController
       reviewer.set_handle()
     end
 
-    if participant.assignment.team_assignment
+    #if participant.assignment.team_assignment
       reviewee = participant.team
       review_mapping = TeamReviewResponseMap.find_by_reviewee_id_and_reviewer_id(reviewee.id, reviewer.id)
-    else
-      reviewee = participant
-      review_mapping = ParticipantReviewResponseMap.find_by_reviewee_id_and_reviewer_id(reviewee.id, reviewer.id)
-    end
+    #else
+    #  reviewee = participant
+    #  review_mapping = ParticipantReviewResponseMap.find_by_reviewee_id_and_reviewer_id(reviewee.id, reviewer.id)
+    #end
 
     if review_mapping.nil?
-      if participant.assignment.team_assignment
+      #if participant.assignment.team_assignment
         review_mapping = TeamReviewResponseMap.create(:reviewee_id => participant.team.id, :reviewer_id => reviewer.id, :reviewed_object_id => participant.assignment.id)
-      else
-        review_mapping = ParticipantReviewResponseMap.create(:reviewee_id => participant.id, :reviewer_id => reviewer.id, :reviewed_object_id => participant.assignment.id)
-      end
+      #else
+      #  review_mapping = ParticipantReviewResponseMap.create(:reviewee_id => participant.id, :reviewer_id => reviewer.id, :reviewed_object_id => participant.assignment.id)
+      #end
     end
     review = Response.find_by_map_id(review_mapping.id)
 
@@ -209,14 +207,13 @@ class GradesController < ApplicationController
     # For author feedback, participants need to be able to read feedback submitted by other teammates.
     # If response is anything but author feedback, only the person who wrote feedback should be able to see it.
     ## This following code was cloned from response_controller.
-    
-    if @participant.assignment.team_assignment
+
+     #ACS Check if team count is more than 1 instead of checking if it is a team assignment
+     if @participant.assignment.team_count > 1
       team = @participant.team
-      if(!team.nil?)
-        unless team.has_user session[:user]
-          redirect_to '/denied?reason=You are not on the team that wrote this feedback'
-          return true
-        end
+      unless team.has_user session[:user]
+        redirect_to '/denied?reason=You are not on the team that wrote this feedback'
+        return true
       end
     else
       reviewer = AssignmentParticipant.find_by_user_id_and_parent_id(session[:user].id, @participant.assignment.id)

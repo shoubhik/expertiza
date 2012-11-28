@@ -31,7 +31,7 @@ class RubricTest < ActiveSupport::TestCase
     assert_equal "questionnaire1 new name", @questionnaire1.name
   end
   
-  
+
   def test_validate_no_numbers
     @questionnaire1.min_question_score = "akajfsd"
     @questionnaire1.max_question_score = "fkjlfsdi"

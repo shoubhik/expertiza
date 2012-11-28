@@ -1,8 +1,8 @@
 class ResponseController < ApplicationController
   helper :wiki
   helper :submitted_content
-  helper :file  
-  
+  helper :file
+
   def delete
     @response = Response.find(params[:id])
     return if redirect_when_disallowed(@response)
@@ -120,14 +120,14 @@ class ResponseController < ApplicationController
 
        end
   end
-  
+
   def edit
     @header = "Edit"
     @next_action = "update"
     @return = params[:return]
     @response = Response.find(params[:id]) 
     return if redirect_when_disallowed(@response)
-    @map = @response.map 
+    @map = @response.map
     array_not_empty=0
     @sorted_array=Array.new
     @prev=Response.all
@@ -189,8 +189,7 @@ class ResponseController < ApplicationController
       
       @questionnaire = @map.questionnaire
       questions = @questionnaire.questions
-     
-     
+
       params[:responses].each_pair do |k,v|
       
         score = Score.find_by_response_id_and_question_id(@response.id, questions[k.to_i].id)
@@ -301,7 +300,7 @@ class ResponseController < ApplicationController
     end
    end
 
-  def create     
+  def create
     @map = ResponseMap.find(params[:id])
     @res = 0
     msg = ""

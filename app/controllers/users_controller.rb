@@ -5,7 +5,7 @@ class UsersController < ApplicationController
          :redirect_to => { :action => :list }
 
   def index
-    if (current_user_role? == "Student") 
+    if (current_user_role? == "Student")
       redirect_to(:action => AuthHelper::get_home_action(session[:user]), :controller => AuthHelper::get_home_controller(session[:user])) 
     else
       list
@@ -28,7 +28,6 @@ class UsersController < ApplicationController
     @users = User.find(:all, :conditions => ['name LIKE ? and (role_id in (?) or id = ?)', "#{params[:user][:name]}%",role.get_available_roles, user.id])
     render :inline => "<%= auto_complete_result @users, 'name' %>", :layout => false
   end
-
   #for displaying the list of users
   def list
     user = session[:user]
@@ -70,7 +69,6 @@ class UsersController < ApplicationController
        end
     }
   end
-
   def show_selection
     @user = User.find_by_name(params[:user][:name])
     if @user != nil

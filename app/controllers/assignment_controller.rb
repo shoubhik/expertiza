@@ -1,7 +1,6 @@
 class AssignmentController < ApplicationController
   auto_complete_for :user, :name
   before_filter :authorize
-
   #-------------------------------------------------------------------------------------------------------------------
   # COPY
   # Creates a copy of an assignment along with dates and submission directory
@@ -84,6 +83,13 @@ class AssignmentController < ApplicationController
     if (@assignment.microtask)
        @assignment.name = "MICROTASK - " + @assignment.name
     end
+    # ACS added code to handle all assignments as team assignments. we set team count to 1 if
+    # the team assignment option was selected as NO while adding a new assignment
+    # and further use this variable to check what type of assignment we are dealing with
+    if params[:team_assignment] == false
+      @assignment.team_count = 1
+    end
+
     set_days_between_submissions
 
     check_flag = @assignment.availability_flag
@@ -92,7 +98,7 @@ class AssignmentController < ApplicationController
       raise "Please enter a valid Submission deadline!!"
       render :action => 'create'
     elsif (@assignment.save)
-      set_questionnaires   
+      set_questionnaires
       set_limits_and_weights
       max_round = 1
       begin
@@ -106,10 +112,10 @@ class AssignmentController < ApplicationController
         due_date = DueDate::set_duedate(params[:review_deadline],@Review_deadline, @assignment.id, max_round )
 #        raise "Please enter a valid Review deadline" if !due_date
         max_round = 2;
-        
+
         due_date = DueDate::set_duedate(params[:drop_topic_deadline],@drop_topic_deadline, @assignment.id, 0)
  #       raise "Please enter a valid Drop-Topic deadline" if !due_date
-        
+
         if params[:assignment_helper][:no_of_reviews].to_i >= 2
           for resubmit_duedate_key in params[:additional_submit_deadline].keys
             #setting the Due Dates with a helper function written in DueDate.rb
@@ -322,6 +328,9 @@ class AssignmentController < ApplicationController
     default = AssignmentQuestionnaire.find_by_user_id_and_assignment_id_and_questionnaire_id(user_id,nil,nil)
 
     default_limit_value = default.nil? ? 15 : default.notification_limit
+    get_limits_and_weights
+    @wiki_types = WikiType.find(:all)
+
 
     @limits[:review]     = default_limit_value
     @limits[:metareview] = default_limit_value
@@ -409,6 +418,13 @@ class AssignmentController < ApplicationController
 
     # The update call below updates only the assignment table. The due dates must be updated separately.
     if @assignment.update_attributes(params[:assignment])
+      # ACS added code to handle all assignments as team assignments. we set team count to 1 if
+      # the team assignment option was selected as NO while editing an existing assignment
+      # and further use this variable to check what type of assignment we are dealing with
+      if @assignment.team_assignment == false
+        @assignment.team_count = 1
+        @assignment.save
+      end
       if params[:questionnaires] and params[:limits] and params[:weights]
         set_questionnaires
         set_limits_and_weights
@@ -490,7 +506,6 @@ class AssignmentController < ApplicationController
         end
         assignment.delete(params[:force])
         @a = Node.find(:first, :conditions => ['node_object_id = ? and type = ?',params[:id],'AssignmentNode'])
-
         @a.destroy
         flash[:notice] = "The assignment is deleted"
       rescue

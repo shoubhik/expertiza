@@ -2,7 +2,7 @@ class Participant < ActiveRecord::Base
   belongs_to :user
   belongs_to :topic, :class_name => 'SignUpTopic'
   belongs_to :assignment, :foreign_key => 'parent_id'
-  
+
   has_many   :comments, :dependent => :destroy
   has_many   :resubmission_times, :dependent => :destroy
   has_many   :reviews, :class_name => 'ResponseMap', :foreign_key => 'reviewer_id'
@@ -10,7 +10,7 @@ class Participant < ActiveRecord::Base
   has_many :response_maps, :class_name =>'ResponseMap', :foreign_key => 'reviewee_id'
   # TODO A bug in Rails http://dev.rubyonrails.org/ticket/4996 prevents us from using this:
   #has_many :responses, :through => :response_maps
-  
+
   validates_numericality_of :grade, :allow_nil => true
 
   def name
@@ -102,22 +102,20 @@ class Participant < ActiveRecord::Base
   #Other team members records will be updated automatically.
   def update_topic_id(topic_id)
     assignment = Assignment.find(self.parent_id)
+    #ACS Call the select method for all the teams(single or group)
+    #removed check to see if it is a team assignment
+    team = Team.find_by_sql("SELECT u.team_id as team_id
+                                FROM teams as t,teams_users as u
+                                WHERE t.parent_id = " + assignment.id.to_s + " and t.id = u.team_id and u.user_id = " + self.user_id.to_s )
 
-    if assignment.team_assignment?
-      team = Team.find_by_sql("SELECT u.team_id as team_id
-                                  FROM teams as t,teams_users as u
-                                  WHERE t.parent_id = " + assignment.id.to_s + " and t.id = u.team_id and u.user_id = " + self.user_id.to_s )
+    team_id = team[0]["team_id"]
+    team_members = TeamsUser.find_all_by_team_id(team_id)
 
-      team_id = team[0]["team_id"]
-      team_members = TeamsUser.find_all_by_team_id(team_id)
-      
-      team_members.each { |team_member|
-        participant = Participant.find_by_user_id_and_parent_id(team_member.user_id,assignment.id)
-        participant.update_attribute(:topic_id, topic_id)
-      }
-    else
-      self.update_attribute(:topic_id, topic_id)
-    end
+    team_members.each { |team_member|
+      participant = Participant.find_by_user_id_and_parent_id(team_member.user_id,assignment.id)
+      participant.update_attribute(:topic_id, topic_id)
+    }
+
   end
 
   # Returns the average score of all reviews for this user on this assignment (Which assignment ??? )

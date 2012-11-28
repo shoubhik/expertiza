@@ -10,7 +10,7 @@
                # reviews done
             </th>
             <th width = "20%">
-            	<% if @assignment.team_assignment %>
+            	<% if @assignment.team_count > 1 %><!-- % if @assignment.team_assignment %-->
                 Team reviewed
 				<% else %>
 				Participant reviewed
@@ -59,7 +59,7 @@
                         <td bgcolor="#DDDDBB" rowspan=<%= @rspan%>>
                             <%= link_to_remote_redbox  username, :url => {:controller => 'popup', :action => 'reviewer_details_popup', :id => r.reviewer_id} %>
                         </td>
-
+                      </tr>
                 <%end %>
 
                 <%if (@count == (ResponseMap.find(:all, :conditions => ["reviewed_object_id = ? AND reviewer_id = ?", @id, r.reviewer_id])).length) %>
@@ -67,7 +67,7 @@
                         <%= @count %>/<%= @rspan %>
                     </td>
                 <%else %>
-                    <td align = "center" rowspan= <%= @rspan%> style = "color:#DD3300">
+                    <td align = "center" style = "color:#DD3300" rowspan=<%= @rspan%> >
                         <%= @count %>/<%= @rspan %>
                     </td>
                 <%end %>
@@ -121,7 +121,7 @@
                         <%end %>
 
                     <% else %>
-                        <%if @assignment.team_assignment && Team.find(:all, :conditions => { :id => ri.reviewee_id}).length > 0 %>
+                        <% if @assignment.team_count > 1 && Team.find(:all, :conditions => { :id => ri.reviewee_id}).length > 0 %><!-- if @assignment.team_assignment && Team.find(:all, :conditions => { :id => ri.reviewee_id}).length > 0  %-->
                             <% if (@l%2) == 0 %>
                                 <td id = "red" bgcolor="#ffffff" style ="color:#DD3300" align = 'center' colspan=1>
                             <%else %>

@@ -48,7 +48,9 @@ class AssignmentControllerTest < ActionController::TestCase
       :author_feedback_questionnaire_id  => questionnaire_id,
       :instructor_id => instructorid,
       :course_id => courseid,
-      :wiki_type_id => 1
+      :wiki_type_id => 1,
+      :team_assignment => "No"
+
     )
 
     #p flash[:notice].to_s

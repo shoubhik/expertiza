@@ -1,6 +1,5 @@
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
-
   def is_available(user,owner_id)
     if user.id == owner_id
       return true
@@ -30,7 +29,6 @@ module ApplicationHelper
     end
     user
   end
-
   def self.get_user_first_name(recipient)
     return '' if recipient.fullname.blank?
     if recipient.fullname.index(",")

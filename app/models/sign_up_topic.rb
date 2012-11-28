@@ -79,15 +79,14 @@ class SignUpTopic < ActiveRecord::Base
 
         #update participants
         assignment = Assignment.find(self.assignment_id)
+      #ACS Removed the if condition(and corressponding else) which differentiate assignments as team and individual assignments
+      # to treat all assignments as team assignments
+        user_id = TeamsUser.find(:first, :conditions => {:team_id => next_wait_listed_user.creator_id}).user_id
+        participant = Participant.find_by_user_id_and_parent_id(user_id,assignment.id)
 
-        if assignment.team_assignment?
-          user_id = TeamsUser.find(:first, :conditions => {:team_id => next_wait_listed_user.creator_id}).user_id
-          participant = Participant.find_by_user_id_and_parent_id(user_id,assignment.id)
-        else
-          participant = Participant.find_by_user_id_and_parent_id(next_wait_listed_user.creator_id,assignment.id)
-        end
         participant.update_topic_id(self.id)
       end
     }
-  end
+  end  
+
 end

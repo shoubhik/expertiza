@@ -69,7 +69,9 @@ class AdminController < ApplicationController
 
   def search_administrator
     @results = search_users(Role.administrator.id)
+   @users = User.paginate(:page => params[:page], :order => 'name',:conditions => ["parent_id = ? AND role_id = ?", user_id, Role::INSTRUCTOR], :per_page => 50)
   end
+
 
   def add_administrator
     @user = User.new
@@ -114,7 +116,8 @@ class AdminController < ApplicationController
     PgUsersController.create(Role.superadministrator.id,:admin_controller,:list_super_administrators,:add_super_administrator)
   end
 
+
   def list_super_administrators
-    @users = User.find(:all, :conditions => ["role_id = ?", Role.superadministrator.id])
+    @users = User.find(:all, :conditions => ["role_id = ?", Role::SUPERADMINISTRATOR])
   end
 end

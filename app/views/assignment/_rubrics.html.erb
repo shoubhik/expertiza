@@ -47,7 +47,7 @@ function metareview_due_date() {
    <td style="padding: 15px;">
       <% selected = @assignment.questionnaires.find_by_type('MetareviewQuestionnaire') %>
       <select id="metareview_quest" style="width:250px" name="questionnaires[metareview]" onchange="metareview_due_date();">
-        <option value="0" <%if selected.nil?%>selected="yes"<%end%>>--None--</option>        
+        <option value="0" <%if selected.nil?%>selected="yes"<%end%>>--None--</option>
         <% MetareviewQuestionnaire.find(:all, :conditions => ['private = 0 or instructor_id = ?',user_id], :order => "name").each{
              | questionnaire | %>
              <option value="<%=questionnaire.id%>" <% if selected != nil and questionnaire.id == selected.id%>selected="yes"<%end%>><%=questionnaire.name %></option>
@@ -78,7 +78,7 @@ function metareview_due_date() {
    <td style="padding: 15px;">
        <input id="limits_feedback" name="limits[feedback]" size="5" type="text" value="<%= @limits[:feedback] %>"/>%                         
    </td></tr>
- <tr id="teammate_review" <%if !@assignment.team_assignment %>style="display:none"<% end %>>  
+ <tr id="teammate_review" <%if !@assignment.team_assignment %>style="display:none"<% end %>>
    <td>Teammate Review:</td>
    <td style="padding: 15px;">        
       <% selected = @assignment.questionnaires.find_by_type('TeammateReviewQuestionnaire') %>       

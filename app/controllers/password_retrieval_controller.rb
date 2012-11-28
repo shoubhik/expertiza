@@ -2,7 +2,6 @@ class PasswordRetrievalController < ApplicationController
 
   def forgotten
   end
-
   def send_password
     if params[:user][:email].nil? or params[:user][:email].strip.length == 0
       flash[:pwerr] = "Please enter an e-mail address"     

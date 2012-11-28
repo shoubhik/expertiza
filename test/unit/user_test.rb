@@ -97,7 +97,7 @@ class UserTest < ActiveSupport::TestCase
     assert_equal 1, avail_users_like_student1.size
     assert_equal "student1", avail_users_like_student1.first.name
   end
-  
+
   def test_emails_must_be_valid
     u = User.new(:email => "new@guy.co", :name => 'newguy')
     assert u.valid?, "Should be valid with a valid email"
@@ -129,5 +129,4 @@ class UserTest < ActiveSupport::TestCase
     assert_equal "Test Email", email.subject             # Checks if the mail subject is the same
 
   end
-
 end

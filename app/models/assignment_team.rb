@@ -251,5 +251,5 @@ class AssignmentTeam < Team
     end
     fields.push("Assignment Name")
   end
-end  
+end
 

@@ -305,12 +305,11 @@ class QuestionnaireController < ApplicationController
          this_q.save
     end
   end
-  
+
   # Handles questions whose wording changed as a result of the edit    
   def save_questions(questionnaire_id)
     delete_questions questionnaire_id
     save_new_questions questionnaire_id
-
     if params[:question]
       for question_key in params[:question].keys
         begin

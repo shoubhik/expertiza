@@ -42,7 +42,7 @@ class Score < ActiveRecord::Base
       else
         scores[:avg]=0
         end
-    else 
+    else
       scores[:max] = nil
       scores[:min] = nil
       scores[:avg] = nil

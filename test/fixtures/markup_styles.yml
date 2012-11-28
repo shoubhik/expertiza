@@ -3,3 +3,7 @@ markup_textile:
   name: 'Textile'
 markup_markdown:
   name: 'Markdown'
+markup_style1:
+  name: markup1
+markup_style2:
+  name: markup2

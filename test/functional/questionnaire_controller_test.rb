@@ -27,7 +27,7 @@ class QuestionnaireControllerTest < ActionController::TestCase
   end
   
   def test_questionnaire_edit
-    post :edit, {:id => @Questionnaire, :save => true, 
+    post :edit, {:id => @Questionnaire, :save => true,
                        :questionnaire => {:name => "test edit name", 
                                    :type => "ReviewQuestionnaire",
                                    :min_question_score => 1,
@@ -36,7 +36,7 @@ class QuestionnaireControllerTest < ActionController::TestCase
     assert_not_nil(Questionnaire.find(:first, :conditions => ["name = ?", "test edit name"]))
   end
   
-  
+
   def test_Questionnaire_edit_for_existing_name
     
     assert_raise (ActionView::TemplateError){
@@ -44,7 +44,7 @@ class QuestionnaireControllerTest < ActionController::TestCase
     }
     assert_template 'questionnaire/edit_questionnaire'
   end
-  
+
   def test_edit_questionnaire_when_name_not_valid
    
     assert_raise (ActionView::TemplateError){
@@ -52,9 +52,9 @@ class QuestionnaireControllerTest < ActionController::TestCase
     }
   end
   
-  
+
   def test_advice_to_be_saved
-    
+
     post :save_advice, :id => @Questionnaire, :advice =>  { "#{Fixtures.identify(:advice0)}"=> { :advice => "test" } }   
     
     assert_response :redirect

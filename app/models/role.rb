@@ -25,7 +25,7 @@ class Role < ActiveRecord::Base
   def self.superadministrator
     @@superadministrator_role ||= find_by_name 'Super-Administrator'
   end
-  
+
   def Role.rebuild_cache
     roles = Role.find(:all)
     

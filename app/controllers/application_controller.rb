@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
       redirect_to(:controller => 'user_sessions', :action => 'new')
     end
   end
-  
+
   def current_user_role?
     session[:user].role.name
   end

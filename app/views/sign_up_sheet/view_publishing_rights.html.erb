@@ -8,10 +8,10 @@
   <table class="general">
     <tr>
       <th width="5%" rowspan="2">Topic #</th>
-      <th width=<%= (@assignment.team_assignment ? "40" : "60") %> rowspan="2">Topic name(s)</th>
-	  <% if @assignment.team_assignment %>
+      <!-- ACS Since everything is a team(including 1 member teams) do not make any distinction
+      <th width="40" rowspan="2">Topic name(s)</th>
+	  <!-- removed check to see if it is a team assignment -->
       <th width="20%" rowspan="2">Team name</th>
-	  <% end %>
       <th width="35%" colspan="4">Participant</th>
     </tr>
     <tr>
@@ -30,7 +30,8 @@
 
       <% if (@assignment.participants.size > 0)
            for signed_up_user in topic.signed_up_users
-             if @assignment.team_assignment
+             #ACS Find the user(s) signed up for a topic
+             # removed code that handles team and individual assignments differently
                # An unknown bug causes teams to disappear. Don't crash if this happens
                team = Team.find_by_id(signed_up_user.creator_id)
                users = []
@@ -38,20 +39,18 @@
              else
                users = [ User.find(signed_up_user.creator_id) ]
 	         end
-            
+
              showed_team = false
              for user in users
       %>
           <tr>
             <th>&nbsp;</th>
             <th>&nbsp;</th>
-			<% if @assignment.team_assignment
-			     if !showed_team 
-            %>
+			<!-- removed check to see if it is a team assignment -->
+            <% if !showed_team %>
 			<td align="center" rowspan="<%= team.users.size %>"><b><%= team.name %></b></td>
 			  <% end %>
 			  <% showed_team = true %>
-			<% end %>
             <td><%=user.name%></td>
             <td><%=user.fullname%></td>
             <%
@@ -83,4 +82,4 @@
       <% end %>
     <% end %>
   </table>
-<% end %>
+
